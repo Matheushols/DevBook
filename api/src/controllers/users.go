@@ -41,6 +41,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // The ListUsers is used to list all users
 func ListUsers(w http.ResponseWriter, r *http.Request) {
+
 	w.Write([]byte("Searching all Users!"))
 }
 
