@@ -3,7 +3,6 @@ package repositorys
 import (
 	"api/src/models"
 	"database/sql"
-	"fmt"
 	"log"
 )
 
@@ -40,13 +39,15 @@ func (repository users) Create(user models.User) (uint64, error) {
 
 }
 
-func (repository users) List(user models.User) (string, error) {
+// List is used to list the users
+/*func (repository users) List(user models.User) (string, error) {
 	request, erro := repository.db.Query("select * from users")
 
 	if erro != nil {
 		return "0", erro
 	}
 	defer request.Close()
-	fmt.Println(request)
 
+	return request
 }
+*/
