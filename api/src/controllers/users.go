@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 )
 
 // The CreateUser is used to create an user
@@ -50,8 +51,22 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // The ListUsers is used to list all users
 func ListUsers(w http.ResponseWriter, r *http.Request) {
+	nameOrNick := strings.ToLower(r.URL.Query().Get("user"))
+	db, erro := database.Connect()
+	if erro != nil {
+		responses.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
 
-	w.Write([]byte("Searching all Users!"))
+	repository := repositorys.NewUsersRepository(db)
+	users, erro := repository.List(nameOrNick)
+	if erro != nil {
+		responses.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, users)
 }
 
 // The SearchUser is used to get an specific user
