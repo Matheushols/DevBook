@@ -8,7 +8,10 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 // The CreateUser is used to create an user
@@ -71,7 +74,30 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 
 // The SearchUser is used to get an specific user
 func SearchUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Searching for a specific User!"))
+	parameter := mux.Vars(r)
+
+	userId, erro := strconv.ParseUint(parameter["userId"], 10, 64)
+	if erro != nil {
+		responses.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := database.Connect()
+	if erro != nil {
+		responses.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repostory := repositorys.NewUsersRepository(db)
+	user, erro := repostory.SearchById(userId)
+	if erro != nil {
+		responses.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, user)
+
 }
 
 // The EditUser is used to edit an specific user
