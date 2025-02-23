@@ -106,7 +106,7 @@ func (repository users) SearchById(ID uint64) (models.User, error) {
 // EditUsersRepository get an specific user by the id in database and edit it
 func (repository users) EditUsersRepository(ID uint64) (models.User, error) {
 	lines, erro := repository.db.Query(
-		"select id, name, nick, email, createdAt from users where id = ?",
+		"update id, name, nick, email, createdAt from users where id = ?",
 		ID,
 	)
 	if erro != nil {
@@ -129,4 +129,19 @@ func (repository users) EditUsersRepository(ID uint64) (models.User, error) {
 	}
 
 	return user, nil
+}
+
+// Update changes the informations about some user
+func (repository users) Update(ID uint64, user models.User) error {
+	statment, erro := repository.db.Prepare("update users set name = ?, nick = ?, email = ? where id = ?")
+	if erro != nil {
+		return erro
+	}
+	defer statment.Close()
+
+	if _, erro = statment.Exec(user.Name, user.Nick, user.Email, ID); erro != nil {
+		return erro
+	}
+
+	return nil
 }

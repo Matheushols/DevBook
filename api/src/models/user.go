@@ -16,7 +16,23 @@ type User struct {
 	CreatedAt time.Time `json:"createdAt, omitempty"`
 }
 
-func (user *User) validate() error {
+// Prepare going to call the validation and prepare to gived user
+func (user *User) Prepare(step string) error {
+	if erro := user.validate(step); erro != nil {
+		return erro
+	}
+
+	user.format()
+	return nil
+}
+
+func (user *User) format() {
+	user.Name = strings.TrimSpace(user.Name)
+	user.Nick = strings.TrimSpace(user.Nick)
+	user.Email = strings.TrimSpace(user.Email)
+}
+
+func (user *User) validate(step string) error {
 	if user.Name == "" {
 		return errors.New("The Name is required and must not be blank")
 	}
@@ -33,25 +49,9 @@ func (user *User) validate() error {
 		return errors.New("The name is required and must not be blank")
 	}
 
-	if user.Password == "" {
+	if step == "register" && user.Password == "" {
 		return errors.New("The Password is required and must not be blank")
 	}
 
 	return nil
-}
-
-// Prepare going to call the validation and prepare to gived user
-func (user *User) Prepare() error {
-	if erro := user.validate(); erro != nil {
-		return erro
-	}
-
-	user.format()
-	return nil
-}
-
-func (user *User) format() {
-	user.Name = strings.TrimSpace(user.Name)
-	user.Nick = strings.TrimSpace(user.Nick)
-	user.Email = strings.TrimSpace(user.Email)
 }

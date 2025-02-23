@@ -29,7 +29,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if erro = user.Prepare(); erro != nil {
+	if erro = user.Prepare("register"); erro != nil {
 		responses.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
@@ -110,6 +110,23 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	requestBody, erro := io.ReadAll(r.Body)
+	if erro != nil {
+		responses.Erro(w, http.StatusUnprocessableEntity, erro)
+		return
+	}
+
+	var user models.User
+	if erro = json.Unmarshal(requestBody, &user); erro != nil {
+		responses.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	if erro = user.Prepare("edit"); erro != nil {
+		responses.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
 	db, erro := database.Connect()
 	if erro != nil {
 		responses.Erro(w, http.StatusInternalServerError, erro)
@@ -117,14 +134,13 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repostory := repositorys.EditUsersRepository(db)
-	user, erro := repostory.SearchById(userId)
-	if erro != nil {
-		responses.Erro(w, http.StatusInternalServerError, erro)
+	repository := repositorys.NewUsersRepository(db)
+	if erro = repository.Update(userId, user); erro != nil {
+		responses.Erro(w, http.StatusNoContent, erro)
 		return
 	}
 
-	responses.JSON(w, http.StatusOK, user)
+	responses.JSON(w, http.StatusNoContent, nil)
 
 }
 
