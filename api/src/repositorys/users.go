@@ -145,3 +145,18 @@ func (repository users) Update(ID uint64, user models.User) error {
 
 	return nil
 }
+
+// Delete remove the informations about some user
+func (repository users) Delete(ID uint64) error {
+	statment, erro := repository.db.Prepare("delete from users where id = ?")
+	if erro != nil {
+		return erro
+	}
+	defer statment.Close()
+
+	if _, erro = statment.Exec(ID); erro != nil {
+		return erro
+	}
+
+	return nil
+}

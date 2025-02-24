@@ -89,8 +89,8 @@ func SearchUser(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repostory := repositorys.NewUsersRepository(db)
-	user, erro := repostory.SearchById(userId)
+	repository := repositorys.NewUsersRepository(db)
+	user, erro := repository.SearchById(userId)
 	if erro != nil {
 		responses.Erro(w, http.StatusInternalServerError, erro)
 		return
@@ -146,5 +146,27 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 
 // The DeleteUser is used to delete an specific user
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Deleting an specific User!"))
+	parameter := mux.Vars(r)
+
+	userId, erro := strconv.ParseUint(parameter["userId"], 10, 64)
+	if erro != nil {
+		responses.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := database.Connect()
+	if erro != nil {
+		responses.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repository := repositorys.NewUsersRepository(db)
+	erro = repository.Delete(userId)
+	if erro != nil {
+		responses.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, nil)
 }
