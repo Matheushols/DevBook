@@ -52,7 +52,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// The ListUsers is used to list all users
+// The ListUsers is used to list all users or select some user by query parameters
 func ListUsers(w http.ResponseWriter, r *http.Request) {
 	nameOrNick := strings.ToLower(r.URL.Query().Get("user"))
 	db, erro := database.Connect()
@@ -72,7 +72,7 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, users)
 }
 
-// The SearchUser is used to get an specific user
+// The SearchUser is used to get an specific user by id
 func SearchUser(w http.ResponseWriter, r *http.Request) {
 	parameter := mux.Vars(r)
 
@@ -100,7 +100,7 @@ func SearchUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// The EditUser is used to edit an specific user
+// The EditUser is used to edit an specific user by id
 func EditUser(w http.ResponseWriter, r *http.Request) {
 	parameter := mux.Vars(r)
 
@@ -144,7 +144,7 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// The DeleteUser is used to delete an specific user
+// The DeleteUser is used to delete an specific user by id
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	parameter := mux.Vars(r)
 
