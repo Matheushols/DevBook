@@ -16,7 +16,6 @@ import (
 
 // The CreateUser is used to create an user
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Creating User!"))
 	requestBody, erro := io.ReadAll(r.Body)
 	if erro != nil {
 		responses.Erro(w, http.StatusUnprocessableEntity, erro)
@@ -168,5 +167,5 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responses.JSON(w, http.StatusOK, nil)
+	responses.JSON(w, http.StatusNoContent, nil)
 }
