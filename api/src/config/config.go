@@ -15,6 +15,9 @@ var (
 
 	// The port where the api is running
 	Port = 0
+
+	//SecretKey is the key that will be used to sign the token
+	SecretKey []byte
 )
 
 // Upload is going to start the environment variables
@@ -35,4 +38,6 @@ func Upload() {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 	)
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }
